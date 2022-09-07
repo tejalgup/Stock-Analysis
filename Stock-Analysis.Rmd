@@ -1,24 +1,57 @@
+---
+title: Stock Analysis
+output:
+  html_document:
+    df_print: paged
+---
+
+Read in data
 
 ```{r}
 gamestop = read.table("gamestop.csv", header = TRUE, sep = ",")
 
+```
 
+
+
+```{r}
 plot.ts(gamestop$price, xlab = "Days since January 4, 2021", ylab = "Gamestop Price (in Dollars)")
+```
 
+
+
+```{r}
 model = lm(price ~ time, data = gamestop)
 summary(model)
+```
 
+
+
+```{r}
 gamestop$res = residuals(model)
 plot.ts(gamestop$res, xlab = "Days since January 4, 2021", ylab = "Residual")
 abline(a=0, b=0)
+```
 
+
+```{r}
 require(car)
 durbinWatsonTest(model)
+```
 
+
+```{r}
 gamestop = read.table("gamestop.csv", header = TRUE, sep = ",")
+```
 
+
+```{r}
 ar.ols(gamestop$price, order.max = 10, demean = F, intercept =T)
+```
 
+
+
+```{r}
 gamestop$lag1[2:314] = gamestop$price[1:313]
 gamestop$lag2[3:314] = gamestop$price[1:312]
 gamestop$lag3[4:314] = gamestop$price[1:311]
@@ -27,10 +60,18 @@ gamestop$lag5[6:314] = gamestop$price[1:309]
 gamestop$lag6[7:314] = gamestop$price[1:308]
 
 cor(gamestop[c(6:314), c(3:8)])
+```
 
+
+
+```{r}
 model = lm(price ~ lag1 + lag2 + lag3 + lag4 + lag5 + lag6, data = gamestop)
 residuals(model)
+```
 
+
+
+```{r}
 require(car)
 model = lm(price ~ lag1 + lag2 + lag3 + lag4 + lag5 + lag6, data = gamestop)
 durbinWatsonTest(model)
